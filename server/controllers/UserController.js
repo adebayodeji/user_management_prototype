@@ -14,7 +14,7 @@ const validateCredentials = (email, pswd) => {
     }
 };
 
-const processInfo = async (request, response) => {
+const processLoginInfo = async (request, response) => {
     email = request.body.email;
     pswd = request.body.password;
     // validating the username and password
@@ -131,6 +131,5 @@ const getUserVerificationStatus = async (request, response) => {
     response.send(data);
 }
 
-//module.exports = { validateCredentials, processInfo, userCreation, getAllCitizens, logout, getUserDetails, checkLogIn, getUserStatus };
 
-module.exports = { validateCredentials, processInfo, userCreation, logout, checkLogIn, getUserVerificationStatus };
+module.exports = { validateCredentials, processInfo: processLoginInfo, userCreation, logout, checkLogIn, getUserVerificationStatus };

@@ -17,16 +17,12 @@ const httpServer = createServer(app);
 
 dotenv.config();
 
-
-
-
-
-// app.use(
-// 	cors({
-// 		origin: ["http://localhost:3000"],
-// 		credentials: true,
-// 	})
-// );
+app.use(
+	cors({
+		origin: ["http://localhost:3000"],
+		credentials: true,
+	})
+);
 
 let db;
 app.use(bodyParser.json());
@@ -58,20 +54,16 @@ mongoose.connect(db, {
 
 //app.use("/", routes);
 
-// if (process.env.NODE_ENV === "test") {
-// 	httpServer.listen(PORT, "127.0.0.1", () => {
-// 		httpServer.close();
-// 	});
-// }
-// else {
-// 	httpServer.listen(PORT, () =>
-// 		console.log(`App is running at http://localhost:${PORT}\n`)
-// 	);
-// }
-
-httpServer.listen(PORT, () =>
-	console.log(`App is running at http://localhost:${PORT}\n`)
-);
+if (process.env.NODE_ENV === "test") {
+	httpServer.listen(PORT, "127.0.0.1", () => {
+		httpServer.close();
+	});
+}
+else {
+	httpServer.listen(PORT, () =>
+		console.log(`App is running at http://localhost:${PORT}\n`)
+	);
+}
 
 
 //module.exports = { app };

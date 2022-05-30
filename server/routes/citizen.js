@@ -4,9 +4,9 @@ const userController = require('../controllers/UserController');
 
 module.exports = () => 
 {
-    router.post('/processInfo', userController.processInfo);
-    router.post('/register', userController.userCreation);
-    router.post('/userStatus', userController.getUserStatus);
+    router.post('/processLoginInfo', userController.processInfo);
+    router.post('/signUp', userController.userCreation);
+    router.post('/verificationStatus', userController.getUserVerificationStatus);
     router.get('/loggedIn', userController.checkLogIn);
     router.post('/logout', userController.logout);
     
