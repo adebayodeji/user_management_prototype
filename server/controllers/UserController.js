@@ -90,7 +90,6 @@ const userCreation = (request, response) => {
     }
 }
 
-
 const logout = async (request, response) => {
     const token = request.cookies.token;
     if (token) {
@@ -105,31 +104,6 @@ const logout = async (request, response) => {
             }
         });
     } else {
-        response.send(false);
-    }
-}
-
-const getUserDetails = async (request, response) => {
-    try {
-        const token = request.cookies.token;
-        if (token) {
-            jwt.verify(token, process.env.secret, async (err, decodedToken) => {
-                if (err) {
-                    console.log(err.message);
-                    response.send(false);
-                } else {
-                    uname = decodedToken.username;
-                    let citizen = await Citizen.findOne({ username: uname });
-                    data = { username: citizen.username, status: citizen.userstatus, accountstatus: citizen.accountStatus, privilegelevel: citizen.privilegeLevel, id: citizen._id };
-                    response.send(data);
-                }
-            });
-        } else {
-            response.send(false);
-        }
-    }
-    catch (error) {
-        console.log(`Error ${error.message}`);
         response.send(false);
     }
 }
@@ -151,12 +125,12 @@ const checkLogIn = (request, response) => {
 }
 
 const getUserVerificationStatus = async (request, response) => {
-    let uname = request.body.username;
-    let citizen = await Citizen.findOne({ username: uname });
-    data = { status: citizen.userStatus };
+    let email = request.body.email;
+    let user = await User.findOne({ userEmail: email });
+    data = { status: user.accountStatus };
     response.send(data);
 }
 
 //module.exports = { validateCredentials, processInfo, userCreation, getAllCitizens, logout, getUserDetails, checkLogIn, getUserStatus };
 
-module.exports = { validateCredentials, processInfo, userCreation, logout, getUserDetails, checkLogIn, getUserStatus: getUserVerificationStatus };
+module.exports = { validateCredentials, processInfo, userCreation, logout, checkLogIn, getUserVerificationStatus };
