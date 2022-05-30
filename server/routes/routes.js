@@ -3,10 +3,7 @@ const router = express.Router()
 const signUpTemplateCopy = require('../models/signupmodels')
 const bcrypt = require('bcrypt')
 
-router.post('/signup', async (request, response)=>{
-
-    //Salting password first
-
+router.post('/signup', async (request, response) => {
     const saltPassword = await bcrypt.genSalt(10)
     const securePassword = await bcrypt.hash(request.body.password, saltPassword)
 
