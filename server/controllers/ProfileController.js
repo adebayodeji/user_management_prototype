@@ -1,4 +1,4 @@
-const { Citizen } = require('../models/Citizen');
+const { Citizen } = require('../models/UserModel');
 const hashPassword = require('../utils/helpers/hashPassword');
 const { errorResponse, successResponse } = require('../utils/helpers/responses');
 

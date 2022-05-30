@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const citizenController = require('../controllers/CitizenController');
+const citizenController = require('../controllers/UserController');
 
 module.exports = () => 
 {

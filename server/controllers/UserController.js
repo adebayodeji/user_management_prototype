@@ -1,4 +1,4 @@
-const {Citizen} = require('../models/Citizen');
+const { User } = require('../models/UserModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { errorResponse, successResponse } = require('../utils/helpers/responses');
@@ -69,22 +69,28 @@ const processInfo = async (request, response) =>
     }
 }
 
-const citizenCreation = (request, response) =>
+const userCreation = (request, response) =>
 {
-    let uname = request.body.username;
     let pswd = request.body.password;
     let hashedPassword = hashPassword(pswd);
-    // creating an object of the model
-    let citizen = new Citizen(
-    {
-        "username": uname,
+
+    let user = new User({
+        "email": request.body.email,
+        "firstName": request.body.firstName,
+        "lastName": request.body.lastName,
+        "gender": request.body.gender,
+        "age": request.body.age,
+        "dob": request.body.dob,
+        "maritalStatus": request.body.maritalStatus,
+        "nationality": request.body.nationality,
+        "profilePhoto": request.body.profilePhoto,
         "password": hashedPassword,
-        "userStatus": 'online',
-        "accountStatus": 'active',
-        "privilegeLevel": 'citizen'
+        "idNumber": request.body.idNumber,
+        "imageOfID": request.body.image,
+        "accountStatus": "verified"
     });
     // adding the user to the db
-    citizen.save((err) =>
+    user.save((err) =>
     {
         if(err)
         {
@@ -92,22 +98,13 @@ const citizenCreation = (request, response) =>
         }
         else
         {
-            let token = generateToken(uname, hashedPassword);
+            let token = generateToken(email, hashedPassword);
             // Send the token in an HTTP-only cookie
             response.cookie("token", token, { httpOnly: true }).send();
         }
     });
-
-    
 }
 
-const getAllCitizens = async (request, response) =>
-{
-    const query = {};
-    const sort = { userStatus: -1, username: 1 };
-    const allCitizens = await Citizen.find(query).sort(sort);
-    return successResponse(response, 200, 'Show all Citizens', allCitizens);
-}
 
 const logout = async (request, response) =>
 {
@@ -184,4 +181,4 @@ const getUserStatus = async (request, response) => {
     response.send(data);
 }
 
-module.exports = { validateCredentials, processInfo, citizenCreation, getAllCitizens, logout, getUserDetails, checkLogIn, getUserStatus};
+module.exports = { validateCredentials, processInfo, userCreation, getAllCitizens, logout, getUserDetails, checkLogIn, getUserStatus};
