@@ -1,18 +1,14 @@
 const express = require('express');
-
 const router = express.Router();
-
-const citizenController = require('../controllers/UserController');
+const userController = require('../controllers/UserController');
 
 module.exports = () => 
 {
-    router.post('/processInfo', citizenController.processInfo);
-    router.post('/register', citizenController.citizenCreation);
-    router.get('/allCitizens', citizenController.getAllCitizens);
-    router.post('/userStatus', citizenController.getUserStatus);
-    router.get('/userDetails', citizenController.getUserDetails);
-    router.get('/loggedIn', citizenController.checkLogIn);
-    router.post('/logout', citizenController.logout);
+    router.post('/processInfo', userController.processInfo);
+    router.post('/register', userController.userCreation);
+    router.post('/userStatus', userController.getUserStatus);
+    router.get('/loggedIn', userController.checkLogIn);
+    router.post('/logout', userController.logout);
     
     return router; 
 }

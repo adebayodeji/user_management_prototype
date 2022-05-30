@@ -2,9 +2,10 @@
   "name": "y",
   "version": "1.0.0",
   "description": "Sign up Application",
-  "main": "index.js",
+  "type": "module",
+  "main": "server.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon server.js"
   },
   "author": "Deji Adebayo",
   "license": "ISC",
