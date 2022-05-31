@@ -55,6 +55,7 @@ const userCreation = (request, response) => {
     const pswd = request.body.password;
     const hashedPassword = hashPassword(pswd);
     const confirmPswd = request.body.confirmPassword;
+    const userEmail = request.body.email;
 
     if (pswd !== confirmPswd) {
         return errorResponse(response, 400, `Passwords do not match`);
@@ -82,9 +83,7 @@ const userCreation = (request, response) => {
                 return errorResponse(response, 400, `Account creation failed`);
             }
             else {
-                let token = generateToken(email, hashedPassword);
-                // Send the token in an HTTP-only cookie
-                response.cookie("token", token, { httpOnly: true }).send();
+                return successResponse(response, 404, 'User successfully created', userEmail);
             }
         });
     }

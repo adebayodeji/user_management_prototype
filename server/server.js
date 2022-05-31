@@ -51,8 +51,6 @@ mongoose.connect(db, {
 		);
 });
 
-
-
 if (process.env.NODE_ENV === "test") {
 	httpServer.listen(PORT, "127.0.0.1", () => {
 		httpServer.close();
