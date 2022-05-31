@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Joi = require("joi");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -57,14 +56,6 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    securityQuestion: {
-        type: String,
-        required: true
-    },
-    securityAnswer: {
-        type: String,
-        required: true
-    },
     date: {
         type: Date,
         default: Date.now
@@ -73,16 +64,7 @@ const userSchema = new Schema({
 
 const User = mongoose.model('User', userSchema);
 
-const validate = (user) => {
-    const schema = Joi.object({
-        email: Joi.string().email().required(),
-        password: Joi.string().required(),
-    });
-    return schema.validate(user);
-};
-
 module.exports = {
-    User, 
-    validate
+    User
 };
 

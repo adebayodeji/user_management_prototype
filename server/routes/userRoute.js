@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/UserController');
-const passwordReset = require("./routes/passwordReset");
-const users = require("./routes/users");
 
 module.exports = () => 
 {
@@ -11,8 +9,6 @@ module.exports = () =>
     router.post('/verificationStatus', userController.setVerificationStatus);
     router.get('/checklogin', userController.checkLogIn);
     router.post('/logout', userController.logout);
-    router.post("/password-reset", userController.sendResetLink);
-    router.post("/password-reset/:userId/:token", userController.resetPassword);
     
     return router; 
 }
