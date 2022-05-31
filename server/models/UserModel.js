@@ -2,20 +2,60 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    "userEmail": { type: String },
-    "firstName": { type: String },
-    "lastName": { type: String },
-    "gender": { type: String },
-    "age": { type: String },
-    "dob": { type: String },
-    "maritalStatus": { type: String },
-    "nationality": { type: String },
-    "profilePhoto": { type: String },
-    "password": { type: String },
-    "idNumber": { type: String },
-    "imageOfID": { type: String },
-    "accountStatus": { type: String },
-    "userStatus": { type: String },
+    email: {
+        type: String,
+        required: true
+    },
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
+        type: String,
+        required: true
+    },
+    gender: {
+        type: String,
+        required: true
+    },
+    age: {
+        type: String,
+        required: true
+    },
+    dob: {
+        type: String,
+        required: true
+    },
+    maritalStatus: {
+        type: String,
+        required: true
+    },
+    nationality: {
+        type: String,
+        required: true
+    },
+    profilePhoto: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    idNumber: {
+        type: String
+    },
+    imageOfID: {
+        type: String
+    },
+    accountStatus: {
+        type: String,
+        required: true
+    },
+    userStatus: {
+        type: String,
+        required: true
+    },
     date: {
         type: Date,
         default: Date.now
