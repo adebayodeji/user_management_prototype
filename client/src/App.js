@@ -1,26 +1,36 @@
-import React from "react";
-import { Form, Button, Container } from 'react-bootstrap'
+import React, { Fragment, Component } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css'
+import Login from "./components/login/Login";
+
+import {
+	BrowserRouter,
+	Routes,
+	Route,
+} from "react-router-dom";
+import Signup from "./components/signup/Signup";
+import Navbar from "./components/Navbar/Navbar";
+import ForgotPassword from "./components/Password/ForgotPasswordPage/ForgotPassword";
+import ConfirmPassword from "./components/Password/ConfirmPassword";
+import Dashboard from "./components/MainPage/MainPage";
+
 
 class LoginForm extends React.Component {
 	render() {
 		return (
-			<div className="container">
-				<Form>
-					<Form.Group className="mb-3" controlId="formBasicEmail">
-						<Form.Label>Username</Form.Label>
-						<Form.Control type="email" placeholder="Enter email" />
-						<Form.Text className="text-muted"></Form.Text>
-					</Form.Group>
-
-					<Form.Group className="mb-3" controlId="formBasicPassword">
-						<Form.Label>Password</Form.Label>
-						<Form.Control type="password" placeholder="Password" />
-					</Form.Group>
-					
-					<Button variant="primary" type="submit">Submit</Button>
-				</Form>
-			</div>
+			<Fragment>
+				<BrowserRouter>
+					<Routes>
+						<Route exact path="/login" element={<Login />} />
+						<Route exact path="/signup" element={<Signup />} />
+						<Route exact path="/forgotten-password" element={<ForgotPassword />} />
+						<Route exact path="/change-password" element={<ConfirmPassword />} />
+						<Route exact path="/dashboard" element={<Dashboard />} />
+						{/*<Route exact path="/user/albums/:userID" element={<AlbumPage />} /> */}
+						<Route exact path="/" element={<Login />} />
+						{/* <Route path='*' element={<Error />} /> */}
+					</Routes>
+				</BrowserRouter>,
+			</Fragment>
 		);
 	}
 }

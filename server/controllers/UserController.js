@@ -53,8 +53,8 @@ const userCreation = (request, response) => {
 }
 
 const processLoginInfo = async (request, response) => {
-    email = request.body.userEmail;
-    pswd = request.body.password;
+    const email = request.body.userEmail;
+    const pswd = request.body.password;
 
     if (email.length === 0 || pswd.length === 0) {
         return errorResponse(response, 400, 'Invalid Credentials!');
