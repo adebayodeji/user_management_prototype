@@ -1,5 +1,4 @@
 const express = require("express");
-//import path from "path";
 const mongoose = require("mongoose");
 const { createServer } = require("http");
 const dotenv = require("dotenv");
@@ -8,10 +7,8 @@ const morgan = require("morgan");
 const route = require("./routes/index");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-
 const app = express();
 const httpServer = createServer(app);
-//const fs = require('fs');
 
 dotenv.config();
 

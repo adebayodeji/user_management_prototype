@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const userRoute = require("./citizen");
+const userRoute = require("./userRoute");
 const profilesRoute = require("./profiles");
 
 router.use(express.json())
