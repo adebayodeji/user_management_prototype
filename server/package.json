@@ -2,7 +2,6 @@
   "name": "y",
   "version": "1.0.0",
   "description": "Sign up Application",
-  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js"

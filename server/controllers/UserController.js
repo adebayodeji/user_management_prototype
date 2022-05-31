@@ -5,62 +5,24 @@ const { errorResponse, successResponse } = require('../utils/helpers/responses')
 const generateToken = require('../utils/helpers/generateToken');
 const hashPassword = require('../utils/helpers/hashPassword');
 
-const validateCredentials = (email, pswd) => {
-    if (email.length === 0 || pswd.length === 0) {
-        return 'invalid';
-    }
-    else {
-        return 'valid';
-    }
-};
-
-const processLoginInfo = async (request, response) => {
-    email = request.body.email;
-    pswd = request.body.password;
-    // validating the username and password
-    const check = validateCredentials(email, pswd);
-    if (check == 'invalid') {
-        return errorResponse(response, 400, 'Invalid Credentials!');
-    }
-    else {
-        // checking if the user exists
-        User.findOne({ userEmail: email })
-            .then((userInfo) => {
-                if (userInfo) {
-                    // check that the submitted password matches the saved one
-                    const hashedPassword = userInfo.password;
-                    bcrypt.compare(pswd, hashedPassword).then(async (result) => {
-                        if (result) {
-                            //let token = generateToken(userInfo.username, hashedPassword);
-                            //await User.updateOne({ username: userInfo.username }, { $set: { userStatus: 'online' } });
-                            // Send the token in an HTTP-only cookie
-                            response.cookie("token", token, { httpOnly: true }).send();
-                        }
-                        else {
-                            return errorResponse(response, 400, 'Incorrect Username/Password combination!');
-                        }
-                    });
-                }
-                else {
-                    return successResponse(response, 404, 'User does not exist', userEmail);
-                }
-            })
-            .catch(err => {
-                return errorResponse(response, 500, `Error ${err.message}`);
-            });
-    }
-}
-
 const userCreation = (request, response) => {
+    const email = request.body.userEmail;
     const pswd = request.body.password;
     const hashedPassword = hashPassword(pswd);
     const confirmPswd = request.body.confirmPassword;
 
-    if (pswd !== confirmPswd) {
+    if (email.length === 0 || pswd.length === 0) {
+        return errorResponse(response, 400, `Email or Password field cannot be empty`);
+    }
+    else if (pswd !== confirmPswd) {
         return errorResponse(response, 400, `Passwords do not match`);
-    } else {
+    }
+    else if (pswd.length < 8) {
+        return errorResponse(response, 400, `Password should have more than 7 characters`);
+    }
+    else {
         let user = new User({
-            "userEmail": request.body.email,
+            "userEmail": email,
             "firstName": request.body.firstName,
             "lastName": request.body.lastName,
             "gender": request.body.gender,
@@ -70,23 +32,90 @@ const userCreation = (request, response) => {
             "nationality": request.body.nationality,
             "profilePhoto": request.body.profilePhoto,
             "password": hashedPassword,
-            "idNumber": request.body.idNumber,
-            "imageOfID": request.body.image,
-            "accountStatus": "unverified",
+            "idNumber": "",
+            "imageOfID": "",
+            "accountStatus": "UNVERIFIED",
             "userStatus": "online"
         });
-        // adding the user to the db
-    
         user.save((err) => {
             if (err) {
                 return errorResponse(response, 400, `Account creation failed`);
             }
             else {
-                let token = generateToken(email, hashedPassword);
-                // Send the token in an HTTP-only cookie
-                response.cookie("token", token, { httpOnly: true }).send();
+                return successResponse(response, 404, 'User successfully created', email);
             }
         });
+    }
+}
+
+const processLoginInfo = async (request, response) => {
+    email = request.body.userEmail;
+    pswd = request.body.password;
+
+    if (email.length === 0 || pswd.length === 0) {
+        return errorResponse(response, 400, 'Invalid Credentials!');
+    }
+    else {
+        // checking if the user exists
+        User.findOne({ userEmail: email }).then((userInfo) => {
+            if (userInfo) {
+                // check that the submitted password matches the saved one
+                const hashedPassword = userInfo.password;
+                bcrypt.compare(pswd, hashedPassword).then(async (result) => {
+                    if (result) {
+                        let token = generateToken(userInfo.userEmail, hashedPassword);
+                        await User.updateOne({ userEmail: userInfo.userEmail }, { $set: { userStatus: 'online' } });
+                        //Send the token in an HTTP-only cookie
+                        response.cookie("token", token, { httpOnly: true }).send();
+                    }
+                    else {
+                        return errorResponse(response, 400, 'Incorrect Username/Password combination!');
+                    }
+                });
+            }
+            else {
+                return successResponse(response, 404, 'User does not exist', userEmail);
+            }
+        })
+            .catch(err => {
+                return errorResponse(response, 500, `Error ${err.message}`);
+            });
+    }
+}
+
+const setVerificationStatus = async (request, response) => {
+    let email = request.body.userEmail;
+    let idnum = request.body.idNumber;
+    let image = request.body.imageOfID;
+
+    User.findOne({ userEmail: email }).then(async (userInfo) => { 
+        if (userInfo) {
+            if (userInfo.accountStatus === "unverified") {
+                await User.updateOne({ userEmail: email }, { $set: { accountStatus: 'PENDING_VERIFICATION', idNumber: idnum, imageOfID: image } });
+                return successResponse(response, 404, 'Verification pending', email);
+            }
+            else if (userInfo.accountStatus === "PENDING_VERIFICATION") { 
+                return successResponse(response, 404, 'Verification pending', email);
+            } else {
+                return successResponse(response, 404, 'Account verified', email);
+            }
+        }
+    })
+}
+
+const checkLogIn = (request, response) => {
+    try {
+        // get the cookie token
+        const token = request.cookies.token;
+        // If user doesnt have a cookie token return unauthorized
+        if (!token) return response.json(false);
+        // if token exist
+        jwt.verify(token, process.env.secret);
+        response.send(true);
+    }
+    catch (error) {
+        console.log(`Error ${error.message}`);
+        response.json(false);
     }
 }
 
@@ -108,28 +137,4 @@ const logout = async (request, response) => {
     }
 }
 
-const checkLogIn = (request, response) => {
-    try {
-        // get the cookie token
-        const token = request.cookies.token;
-        // If user doesnt have a cookie token return unauthorized
-        if (!token) return response.json(false);
-        // if token exist
-        jwt.verify(token, process.env.secret);
-        response.send(true);
-    }
-    catch (error) {
-        console.log(`Error ${error.message}`);
-        response.json(false);
-    }
-}
-
-const getUserVerificationStatus = async (request, response) => {
-    let email = request.body.email;
-    let user = await User.findOne({ userEmail: email });
-    data = { status: user.accountStatus };
-    response.send(data);
-}
-
-
-module.exports = { validateCredentials, processInfo: processLoginInfo, userCreation, logout, checkLogIn, getUserVerificationStatus };
+module.exports = { processLoginInfo, userCreation, logout, checkLogIn, setVerificationStatus };
