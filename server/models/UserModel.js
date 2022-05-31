@@ -3,7 +3,7 @@ const Joi = require("joi");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    userEmail: {
+    email: {
         type: String,
         required: true
     },
@@ -75,7 +75,6 @@ const User = mongoose.model('User', userSchema);
 
 const validate = (user) => {
     const schema = Joi.object({
-        userEmail: Joi.string().required(),
         email: Joi.string().email().required(),
         password: Joi.string().required(),
     });

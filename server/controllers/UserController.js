@@ -5,7 +5,9 @@ const { errorResponse, successResponse } = require('../utils/helpers/responses')
 const generateToken = require('../utils/helpers/generateToken');
 const hashPassword = require('../utils/helpers/hashPassword');
 const sendEmail = require("../utils/helpers/sendEmails");
-const { request } = require('express');
+const Token = require("../models/token");
+const crypto = require("crypto");
+const Joi = require("joi");
 
 const userCreation = (request, response) => {
     const email = request.body.userEmail;
@@ -24,7 +26,7 @@ const userCreation = (request, response) => {
     }
     else {
         let user = new User({
-            "userEmail": email,
+            "email": email,
             "firstName": request.body.firstName,
             "lastName": request.body.lastName,
             "gender": request.body.gender,
@@ -59,14 +61,14 @@ const processLoginInfo = async (request, response) => {
     }
     else {
         // checking if the user exists
-        User.findOne({ userEmail: email }).then((userInfo) => {
+        User.findOne({ email: email }).then((userInfo) => {
             if (userInfo) {
                 // check that the submitted password matches the saved one
                 const hashedPassword = userInfo.password;
                 bcrypt.compare(pswd, hashedPassword).then(async (result) => {
                     if (result) {
-                        let token = generateToken(userInfo.userEmail, hashedPassword);
-                        await User.updateOne({ userEmail: userInfo.userEmail }, { $set: { userStatus: 'online' } });
+                        let token = generateToken(userInfo.email, hashedPassword);
+                        await User.updateOne({ email: userInfo.userEmail }, { $set: { userStatus: 'online' } });
                         //Send the token in an HTTP-only cookie
                         response.cookie("token", token, { httpOnly: true }).send();
                     }
@@ -125,8 +127,8 @@ const sendResetLink = async (request, response) => {
 
         const link = `${process.env.BASE_URL}/password-reset/${user._id}/${token.token}`;
         await sendEmail(user.email, "Password reset", link);
-
-        res.send("password reset link sent to your email account");
+        return successResponse(response, 404, 'password reset link sent to your email account', user.email);
+        //res.send("password reset link sent to your email account");
     } catch (error) {
         res.send("An error occured");
         console.log(error);

@@ -11,8 +11,8 @@ module.exports = () =>
     router.post('/verificationStatus', userController.setVerificationStatus);
     router.get('/checklogin', userController.checkLogIn);
     router.post('/logout', userController.logout);
-    router.post("/password-reset/:userId/:token", userController.resetPassword);
     router.post("/password-reset", userController.sendResetLink);
-
+    router.post("/password-reset/:userId/:token", userController.resetPassword);
+    
     return router; 
 }

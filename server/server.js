@@ -11,6 +11,7 @@ const app = express();
 const httpServer = createServer(app);
 
 dotenv.config();
+app.use(morgan("dev"));
 
 app.use(
 	cors({
@@ -19,12 +20,13 @@ app.use(
 	})
 );
 
+
 let db;
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/", route);
-app.use(morgan("dev"));
+
 
 if (process.env.NODE_ENV === "test") {
 	db = process.env.testdb;
