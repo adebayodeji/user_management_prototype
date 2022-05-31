@@ -32,8 +32,8 @@ const userCreation = (request, response) => {
             "nationality": request.body.nationality,
             "profilePhoto": request.body.profilePhoto,
             "password": hashedPassword,
-            "idNumber": request.body.idNumber,
-            "imageOfID": request.body.image,
+            "idNumber": "",
+            "imageOfID": "",
             "accountStatus": "UNVERIFIED",
             "userStatus": "online"
         });
@@ -84,20 +84,23 @@ const processLoginInfo = async (request, response) => {
 }
 
 const setVerificationStatus = async (request, response) => {
-    let email = request.body.email;
+    let email = request.body.userEmail;
     let idnum = request.body.idNumber;
-    let 
-    let user = await User.findOne({ userEmail: email });
+    let image = request.body.imageOfID;
 
-    if (user.accountStatus === "UNVERIFIED") {
-        await User.updateOne({ userEmail: email }, { $set: { accountStatus: 'PENDING_VERIFICATION', idNumber: idnum,  } });
-        return successResponse(response, 404, 'Verification pending', email);
-    }
-    else if (user.accountStatus === "PENDING_VERIFICATION") { 
-        return successResponse(response, 404, 'Verification pending', email);
-    } else {
-        return successResponse(response, 404, 'Account verified', email);
-    }
+    User.findOne({ userEmail: email }).then(async (userInfo) => { 
+        if (userInfo) {
+            if (userInfo.accountStatus === "unverified") {
+                await User.updateOne({ userEmail: email }, { $set: { accountStatus: 'PENDING_VERIFICATION', idNumber: idnum, imageOfID: image } });
+                return successResponse(response, 404, 'Verification pending', email);
+            }
+            else if (userInfo.accountStatus === "PENDING_VERIFICATION") { 
+                return successResponse(response, 404, 'Verification pending', email);
+            } else {
+                return successResponse(response, 404, 'Account verified', email);
+            }
+        }
+    })
 }
 
 const checkLogIn = (request, response) => {

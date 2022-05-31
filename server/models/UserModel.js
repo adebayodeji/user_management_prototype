@@ -13,7 +13,7 @@ const userSchema = new Schema({
     "profilePhoto": { type: String },
     "password": { type: String },
     "idNumber": { type: String },
-    "idImage": { type: String },
+    "imageOfID": { type: String },
     "accountStatus": { type: String },
     "userStatus": { type: String },
     date: {
