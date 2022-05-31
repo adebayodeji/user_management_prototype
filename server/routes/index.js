@@ -5,6 +5,5 @@ const userRoute = require("./userRoute");
 router.use(express.json())
 router.use("/user", userRoute());
 
-
 module.exports = router;
 
