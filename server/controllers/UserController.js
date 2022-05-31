@@ -5,6 +5,7 @@ const { errorResponse, successResponse } = require('../utils/helpers/responses')
 const generateToken = require('../utils/helpers/generateToken');
 const hashPassword = require('../utils/helpers/hashPassword');
 const sendEmail = require("../utils/helpers/sendEmails");
+const { request } = require('express');
 
 const userCreation = (request, response) => {
     const email = request.body.userEmail;
@@ -104,7 +105,7 @@ const setVerificationStatus = async (request, response) => {
     })
 }
 
-const resetPassword = async (request, response) => {
+const sendResetLink = async (request, response) => {
     try {
         const schema = Joi.object({ email: Joi.string().email().required() });
         const { error } = schema.validate(req.body);
@@ -126,6 +127,32 @@ const resetPassword = async (request, response) => {
         await sendEmail(user.email, "Password reset", link);
 
         res.send("password reset link sent to your email account");
+    } catch (error) {
+        res.send("An error occured");
+        console.log(error);
+    }
+}
+
+const resetPassword = async (request, response) => { 
+    try {
+        const schema = Joi.object({ password: Joi.string().required() });
+        const { error } = schema.validate(req.body);
+        if (error) return res.status(400).send(error.details[0].message);
+
+        const user = await User.findById(req.params.userId);
+        if (!user) return res.status(400).send("invalid link or expired");
+
+        const token = await Token.findOne({
+            userId: user._id,
+            token: req.params.token,
+        });
+        if (!token) return res.status(400).send("Invalid link or expired");
+
+        user.password = req.body.password;
+        await user.save();
+        await token.delete();
+
+        res.send("password reset sucessfully.");
     } catch (error) {
         res.send("An error occured");
         console.log(error);
@@ -166,4 +193,4 @@ const logout = async (request, response) => {
     }
 }
 
-module.exports = { processLoginInfo, userCreation, logout, checkLogIn, setVerificationStatus };
+module.exports = { processLoginInfo, userCreation, logout, checkLogIn, setVerificationStatus, sendResetLink, resetPassword };
