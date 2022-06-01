@@ -45,7 +45,7 @@ function Signup() {
             nationality: values.user.nationality,
             profilePhoto: values.upload,
             password: values.password,
-            confirmPassword: values.confirm - password,
+            confirmPassword: values.password,
             idNumber: "ff",
             imageOfID: "ff",
             accountStatus: "ff",
