@@ -4,10 +4,7 @@ const jwt = require('jsonwebtoken');
 const { errorResponse, successResponse } = require('../utils/helpers/responses');
 const generateToken = require('../utils/helpers/generateToken');
 const hashPassword = require('../utils/helpers/hashPassword');
-// const sendEmail = require("../utils/helpers/sendEmails");
-// const Token = require("../models/token");
-// const crypto = require("crypto");
-// const Joi = require("joi");
+
 
 const userCreation = (request, response) => {
     const email = request.body.userEmail;
@@ -68,7 +65,7 @@ const processLoginInfo = async (request, response) => {
                 bcrypt.compare(pswd, hashedPassword).then(async (result) => {
                     if (result) {
                         let token = generateToken(userInfo.email, hashedPassword);
-                        await User.updateOne({ email: userInfo.userEmail }, { $set: { userStatus: 'online' } });
+                        await User.updateOne({ email: userInfo.email }, { $set: { userStatus: 'online' } });
                         //Send the token in an HTTP-only cookie
                         response.cookie("token", token, { httpOnly: true }).send();
                     }
