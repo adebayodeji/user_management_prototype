@@ -11,6 +11,7 @@ import {
 import { UploadOutlined, InboxOutlined } from '@ant-design/icons';
 import Title from '../Layout/Title/Title';
 import Navbar from '../Navbar/Navbar';
+import axios from 'axios';
 
 
 function Signup() {
@@ -32,6 +33,25 @@ function Signup() {
 
     const onFinish = (values) => {
         console.log('Received values of form: ', values);
+        let signUpData =
+        {
+            userEmail: values.user.email,
+            firstName: values.user.firstname,
+            lastName: values.user.lastname,
+            gender: "male",
+            age: values.user.age,
+            dob: "2-2-2",
+            maritalStatus: "single",
+            nationality: values.user.nationality,
+            profilePhoto: values.upload,
+            password: values.password,
+            confirmPassword: values.confirm - password,
+            idNumber: "ff",
+            imageOfID: "ff",
+            accountStatus: "ff",
+            userStatus: "ff"
+        }
+        axios.post("/signup", signUpData);
     };
 
 

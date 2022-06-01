@@ -77,7 +77,7 @@ export default function Login() {
             type: "error",
         });
 
-    const [username, setUsername] = useState("default");
+    const [email, setEmail] = useState("default");
     const [password, setPassword] = useState("default");
     const history = useNavigate();
 
@@ -86,16 +86,16 @@ export default function Login() {
 
     async function login(e) {
         e.preventDefault();
-        const loginData = { userEmail: username, password: password };
+        const loginData = { userEmail: email, password: password };
         try {
             console.log(loginData)
             const loginFeedback = await axios.post('/user/login', loginData);
             const loginFeedbackData = loginFeedback.data;
-            console.log(loginFeedbackData)
+            console.log(loginFeedbackData=="")
 
             const adminUsername = 'admin';
             const adminPassword = 'admin';
-            if (username === adminUsername.toLowerCase() && password === adminPassword.toLowerCase()) {
+            if (loginFeedbackData =="") {
                 history('../dashboard', { replace: true })
             } else {
                 alert('Invalid Credentials, Try Again!')
@@ -133,13 +133,12 @@ export default function Login() {
                             margin="normal"
                             required
                             fullWidth
-                            id="username"
-                            label="Username"
-                            name="username"
-                            autoComplete="username"
+                            id="email"
+                            label="Email"
+                            name="email"
                             autoFocus
                             onChange={(e) => {
-                                setUsername(e.target.value);
+                                setEmail(e.target.value);
                             }}
                         />
                         <TextField
