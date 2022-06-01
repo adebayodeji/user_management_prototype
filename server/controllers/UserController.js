@@ -68,7 +68,7 @@ const processLoginInfo = async (request, response) => {
                 bcrypt.compare(pswd, hashedPassword).then(async (result) => {
                     if (result) {
                         let token = generateToken(userInfo.email, hashedPassword);
-                        await User.updateOne({ email: userInfo.userEmail }, { $set: { userStatus: 'online' } });
+                        await User.updateOne({ email: userInfo.email }, { $set: { userStatus: 'online' } });
                         //Send the token in an HTTP-only cookie
                         response.cookie("token", token, { httpOnly: true }).send();
                     }
